@@ -1,0 +1,38 @@
+{
+  "model": "qwen3.5:27b",
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://ollama.com",
+    "ANTHROPIC_AUTH_TOKEN": "aa41b4832c774ced9a7f8911607cfa72.5_1IbHnMUyOcYpV46o2-Catw",
+    "ANTHROPIC_API_KEY": "",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/check_leakage.sh",
+            "timeout": 60,
+            "statusMessage": "Re-running leakage tests..."
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(make:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(python -m src.:*)",
+      "Bash(git diff:*)",
+      "Bash(git status)"
+    ],
+    "deny": [
+      "Write(./data/raw/**)",
+      "Edit(./data/raw/**)",
+      "Bash(rm -rf:*)"
+    ]
+  }
+}
